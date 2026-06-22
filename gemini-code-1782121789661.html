@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attachment Style Questionnaire</title>
+    <style>
+        :root {
+            --primary-color: #e63946;
+            --secondary-color: #ffb703;
+            --background-color: #fff5f5;
+            --card-background: #ffffff;
+            --text-color: #2b2d42;
+            --accent-pink: #ffe3e3;
+            --true-color: #2a9d8f;
+            --false-color: #e63946;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .quiz-container {
+            background: var(--card-background);
+            max-width: 750px;
+            width: 100%;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(230, 57, 70, 0.15);
+            padding: 30px;
+            box-sizing: border-box;
+            border: 2px solid var(--accent-pink);
+            position: relative;
+        }
+
+        .lang-toggle-container {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 10px;
+        }
+
+        .btn-lang {
+            background-color: transparent;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            padding: 6px 12px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-lang:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: var(--primary-color);
+            margin: 10px 0;
+            font-size: 2rem;
+        }
+
+        .heart-icon {
+            font-size: 3rem;
+            color: var(--primary-color);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .instructions {
+            background-color: var(--accent-pink);
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            text-align: center;
+            margin-bottom: 25px;
+            border-left: 5px solid var(--primary-color);
+        }
+
+        .question-row {
+            padding: 20px 15px;
+            border-bottom: 1px solid var(--accent-pink);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            transition: background 0.2s;
+        }
+
+        @media (min-width: 600px) {
+            .question-row {
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+                gap: 20px;
+            }
+        }
+
+        .question-row:hover {
+            background-color: #fff9f9;
+        }
+
+        .question-text {
+            flex: 1;
+            font-size: 1rem;
+            line-height: 1.4;
+        }
+
+        /* Two-Button Toggle Styles */
+        .choice-container {
+            display: flex;
+            gap: 10px;
+            min-width: 160px;
+            justify-content: flex-end;
+        }
+
+        .btn-choice {
+            flex: 1;
+            border: 2px solid #ddd;
+            background-color: #f8f9fa;
+            color: #666;
+            padding: 8px 16px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+
+        /* Active Green for True */
+        .btn-choice.true-btn.active {
+            background-color: var(--true-color);
+            border-color: var(--true-color);
+            color: white;
+            box-shadow: 0 4px 10px rgba(42, 157, 143, 0.3);
+        }
+
+        /* Active Red for False */
+        .btn-choice.false-btn.active {
+            background-color: var(--false-color);
+            border-color: var(--false-color);
+            color: white;
+            box-shadow: 0 4px 10px rgba(230, 57, 70, 0.3);
+        }
+
+        .btn-submit {
+            display: block;
+            width: 100%;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 15px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 30px;
+            transition: background 0.3s, transform 0.1s;
+            box-shadow: 0 5px 15px rgba(230, 57, 70, 0.3);
+        }
+
+        .btn-submit:hover {
+            background-color: #d62828;
+        }
+
+        .btn-submit:active {
+            transform: scale(0.98);
+        }
+
+        .results {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 15px;
+            background: #fff;
+            border: 2px dashed var(--primary-color);
+            display: none;
+        }
+
+        .results h2 {
+            color: var(--primary-color);
+            text-align: center;
+            margin-top: 0;
+        }
+
+        .score-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .score-card {
+            padding: 15px;
+            border-radius: 10px;
+            color: white;
+            font-weight: bold;
+        }
+
+        .score-card.anxious { background-color: #ff4d6d; }
+        .score-card.secure { background-color: #2a9d8f; }
+        .score-card.avoidant { background-color: #457b9d; }
+
+        .verdict {
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-top: 15px;
+            color: var(--text-color);
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <div class="lang-toggle-container">
+        <button type="button" id="langBtn" class="btn-lang" onclick="toggleLanguage()">தமிழ் வடிவம்</button>
+    </div>
+
+    <div class="header">
+        <div class="heart-icon">❤️</div>
+        <h1 id="mainTitle">Attachment Style Questionnaire</h1>
+        <p id="subTitle">Based on <em>'Attached'</em> by Amir Levine & Rachel Heller</p>
+    </div>
+
+    <div id="instructionText" class="instructions">
+        Select either <strong>True</strong> or <strong>False</strong> for each statement to see your profile evaluation.
+    </div>
+
+    <form id="quizForm">
+        <div id="questions-wrapper"></div>
+
+        <button type="button" id="submitBtn" class="btn-submit" onclick="calculateScore()">Calculate My Score Results! ❤️</button>
+    </form>
+
+    <div id="resultsCard" class="results">
+        <h2 id="resultTitle">Your Relationship Profile</h2>
+        <div class="score-grid">
+            <div class="score-card anxious">
+                <span id="labelAnxious">Anxious Score</span><br><span id="anxiousScore" style="font-size: 1.8rem;">0</span>
+            </div>
+            <div class="score-card secure">
+                <span id="labelSecure">Secure Score</span><br><span id="secureScore" style="font-size: 1.8rem;">0</span>
+            </div>
+            <div class="score-card avoidant">
+                <span id="labelAvoidant">Avoidant Score</span><br><span id="avoidantScore" style="font-size: 1.8rem;">0</span>
+            </div>
+        </div>
+        <div id="verdictText" class="verdict"></div>
+    </div>
+</div>
+
+<script>
+    let currentLang = 'en';
+
+    // State object to keep track of user choices across renders: { index: "true" | "false" }
+    const userChoices = {};
+
+    const uiTranslations = {
+        en: {
+            title: "Attachment Style Questionnaire",
+            subTitle: "Based on <em>'Attached'</em> by Amir Levine & Rachel Heller",
+            instructions: "Select either <strong>True</strong> or <strong>False</strong> for each statement to see your profile evaluation.",
+            submitBtn: "Calculate My Score Results! ❤️",
+            resultTitle: "Your Relationship Profile",
+            anxious: "Anxious Score",
+            secure: "Secure Score",
+            avoidant: "Avoidant Score",
+            langBtn: "தமிழ் வடிவம்",
+            trueLabel: "True",
+            falseLabel: "False"
+        },
+        ta: {
+            title: "பற்றுதல் குணம் பற்றிய வினாடி வினா",
+            subTitle: "அமீர் லெவின் & ரேச்சல் ஹெல்லர் எழுதிய <em>'Attached'</em> புத்தகத்தின் அடிப்படையில்",
+            instructions: "உங்கள் சுயவிவரத்தைக் கணக்கிட, ஒவ்வொரு வாக்கியத்திற்கும் <strong>உண்மை (True)</strong> அல்லது <strong>தவறு (False)</strong> என்பதைத் தேர்ந்தெடுக்கவும்.",
+            submitBtn: "எனது முடிவுகளைக் கணக்கிடு! ❤️",
+            resultTitle: "உங்கள் உறவுமுறை சுயவிவரம்",
+            anxious: "பதற்றமான நிலை (Anxious)",
+            secure: "பாதுகாப்பான நிலை (Secure)",
+            avoidant: "விலகியிருக்கும் நிலை (Avoidant)",
+            langBtn: "English Version",
+            trueLabel: "உண்மை",
+            falseLabel: "தவறு"
+        }
+    };
+
+    const questionsData = [
+        { id: 1, text_en: "I often worry that my partner will stop loving me.", text_ta: "என் துணை என் மீதான அன்பை நிறுத்திவிடுவாரோ என்று நான் அடிக்கடி கவலைப்படுகிறேன்.", type: "A" },
+        { id: 2, text_en: "I find it easy to be affectionate with my partner.", text_ta: "என் துணையிடம் பாசத்தை வெளிப்படுத்துவது எனக்கு எளிதாக இருக்கிறது.", type: "B" },
+        { id: 3, text_en: "I fear that once someone gets to know the real me, s/he won't like who I am.", text_ta: "யாராவது எனது உண்மையான குணத்தைத் தெரிந்து கொண்டால், அவர்களுக்கு என்னை பிடிக்காமல் போய்விடுமோ என்று நான் பயப்படுகிறேன்.", type: "A" },
+        { id: 4, text_en: "I find that I bounce back quickly after a breakup. It's weird how I can just put someone out of my mind.", text_ta: "ஒரு காதல் முறிவுக்குப் பிறகு நான் விரைவாக மீண்டு வந்துவிடுகிறேன். ஒருவரை என் மனதில் இருந்து இவ்வளவு எளிதாக மறக்க முடிவது எனக்கே ஆச்சரியமாக இருக்கிறது.", type: "C" },
+        { id: 5, text_en: "When I'm not involved in a relationship, I feel somewhat anxious and incomplete.", text_ta: "நான் எந்தவொரு உறவிலும் இல்லாதபோது, ஒருவித பதற்றத்தையும் முழுமையற்ற தன்மையையும் உணர்கிறேன்.", type: "A" },
+        { id: 6, text_en: "I find it difficult to emotionally support my partner when s/he is feeling down.", text_ta: "என் துணை மனச்சோர்வோடு இருக்கும்போது, அவருக்கு உணர்வுபூர்வமாக ஆதரவளிப்பது எனக்கு கடினமாக உள்ளது.", type: "C" },
+        { id: 7, text_en: "When my partner is away, I'm afraid that s/he might become interested in someone else.", text_ta: "என் துணை என்னை விட்டு தூரத்தில் இருக்கும்போது, அவர் வேறு யாராவது மீது ஆர்வம் கொள்ளக்கூடும் என்று நான் பயப்படுகிறேன்.", type: "A" },
+        { id: 8, text_en: "I feel comfortable depending on romantic partners.", text_ta: "என் காதல் துணையைச் சார்ந்திருப்பதை நான் வசதியாக உணர்கிறேன்.", type: "B" },
+        { id: 9, text_en: "My independence is more important to me than my relationships.", text_ta: "உறவுகளை விட எனது தனிப்பட்ட சுதந்திரமே எனக்கு முக்கியம்.", type: "C" },
+        { id: 10, text_en: "I prefer not to share my innermost feelings with my partner.", text_ta: "என் மனதில் இருக்கும் ஆழமான உணர்வுகளை என் துணையுடன் பகிர்ந்து கொள்ளாமல் இருக்கவே விரும்புகிறேன்.", type: "C" },
+        { id: 11, text_en: "When I show my partner how I feel, I'm afraid s/he will not feel the same about me.", text_ta: "என் உணர்வுகளை என் துணையிடம் காட்டும்போது, அவரும் என்னைப்போல் உணரமாட்டாரோ என்று நான் பயப்படுகிறேன்.", type: "A" },
+        { id: 12, text_en: "I am generally satisfied with my romantic relationships.", text_ta: "நான் பொதுவாக எனது காதல் உறவுகளில் திருப்தியடைகிறேன்.", type: "B" },
+        { id: 33, text_en: "If I notice that someone I'm interested in is checking out other people, I don't let it faze me. I might feel a pang of jealousy, but it's fleeting.", text_ta: "நான் விரும்பும் நபர் வேறு யாரையாவது பார்ப்பதை நான் கவனித்தால், அது என்னை அதிகம் பாதிக்காது. ஒரு சிறிய பொறாமை தோன்றினாலும், அது உடனே கடந்துவிடும்.", type: "B" },
+        { id: 34, text_en: "If I notice that someone I'm interested in is checking out other people, I feel relieved—it means s/he's not looking to make things exclusive.", text_ta: "நான் விரும்பும் நபர் வேறு யாரையாவது கவனித்தால் நான் நிம்மதியடைகிறேன்—இதன் மூலம் அவர் இந்த உறவை தீவிரமாக்க விரும்பவில்லை என்பதைப் புரிந்து கொள்கிறேன்.", type: "C" },
+        { id: 35, text_en: "If I notice that someone I'm interested in is checking out other people, it makes me feel depressed.", text_ta: "நான் விரும்பும் நபர் மற்றவர்களைப் பார்ப்பது எனக்கு மனச்சோர்வை ஏற்படுத்துகிறது.", type: "A" },
+        { id: 36, text_en: "If someone I've been dating begins to act cold and distant, I may wonder what's happened, but I'll know it's probably not about me.", text_ta: "நான் பழகி வரும் ஒருவர் திடீரென விலகி அமைதியாக இருந்தால், என்ன நடந்தது என்று நான் யோசிப்பேன், ஆனால் அதற்கு நான் காரணமல்ல என்பதை புரிந்து கொள்வேன்.", type: "B" },
+        { id: 37, text_en: "If someone I've been dating begins to act cold and distant, I'll probably be indifferent; I might even be relieved.", text_ta: "நான் பழகி வரும் ஒருவர் விலகிச் சென்றால், நான் அதைப்பற்றிக் கவலைப்படமாட்டேன்; சில நேரங்களில் நிம்மதியாகக்கூட உணர்வேன்.", type: "C" },
+        { id: 38, text_en: "If someone I've been dating begins to act cold and distant, I'll worry that I've done something wrong.", text_ta: "நான் பழகி வரும் ஒருவர் திடீரென விலகிச் சென்றால், நான் ஏதேனும் தவறு செய்துவிட்டேனோ என்று கவலைப்படுவேன்.", type: "A" },
+        { id: 39, text_en: "If my partner was to break up with me, I'd try my best to show her/him what s/he is missing (a little jealousy can't hurt).", text_ta: "என் துணை என்னை விட்டு பிரிந்தால், அவர் எதை இழந்தார் என்பதை அவருக்குக் காட்ட நான் என்னால் இயன்றவரை முயற்சிப்பேன் (சிறிது பொறாமை தூண்டுவதில் தப்பில்லை).", type: "A" },
+        { id: 40, text_en: "If someone I've been dating for several months tells me s/he wants to stop seeing me, I'd feel hurt at first, but I'd get over it.", text_ta: "பல மாதங்களாக நான் பழகி வரும் ஒருவர் என்னை இனிமேல் பார்க்க வேண்டாம் என்று கூறினால், முதலில் எனக்கு வருத்தமாக இருக்கும், ஆனால் அதிலிருந்து நான் மீண்டு விடுவேன்.", type: "B" },
+        { id: 41, text_en: "Sometimes when I get what I want in a relationship, I'm not sure what I want anymore.", text_ta: "சில நேரங்களில் ஒரு உறவில் நான் நினைத்தது கிடைத்தவுடன், எனக்கு அடுத்து என்ன வேண்டும் என்பதில் குழப்பம் ஏற்படுகிறது.", type: "C" }
+    ];
+
+    function selectChoice(index, value) {
+        // Update selection state
+        userChoices[index] = value;
+        
+        // Grab local elements to switch active color states immediately
+        const row = document.getElementById(`row-${index}`);
+        const trueBtn = row.querySelector('.true-btn');
+        const falseBtn = row.querySelector('.false-btn');
+
+        if (value === 'true') {
+            trueBtn.classList.add('active');
+            falseBtn.classList.remove('active');
+        } else {
+            falseBtn.classList.add('active');
+            trueBtn.classList.remove('active');
+        }
+    }
+
+    function renderQuestions() {
+        const wrapper = document.getElementById('questions-wrapper');
+        wrapper.innerHTML = '';
+        
+        questionsData.forEach((q, index) => {
+            const row = document.createElement('div');
+            row.className = 'question-row';
+            row.id = `row-${index}`;
+            
+            const questionText = currentLang === 'en' ? q.text_en : q.text_ta;
+            const currentChoice = userChoices[index];
+
+            const trueActive = currentChoice === 'true' ? 'active' : '';
+            const falseActive = currentChoice === 'false' ? 'active' : '';
+            
+            row.innerHTML = `
+                <div class="question-text"><strong>${index + 1}.</strong> ${questionText}</div>
+                <div class="choice-container">
+                    <button type="button" class="btn-choice true-btn ${trueActive}" onclick="selectChoice(${index}, 'true')">
+                        ${uiTranslations[currentLang].trueLabel}
+                    </button>
+                    <button type="button" class="btn-choice false-btn ${falseActive}" onclick="selectChoice(${index}, 'false')">
+                        ${uiTranslations[currentLang].falseLabel}
+                    </button>
+                </div>
+            `;
+            wrapper.appendChild(row);
+        });
+    }
+
+    function toggleLanguage() {
+        currentLang = currentLang === 'en' ? 'ta' : 'en';
+        
+        // Update layout labels
+        document.getElementById('langBtn').innerText = uiTranslations[currentLang].langBtn;
+        document.getElementById('mainTitle').innerHTML = uiTranslations[currentLang].title;
+        document.getElementById('subTitle').innerHTML = uiTranslations[currentLang].subTitle;
+        document.getElementById('instructionText').innerHTML = uiTranslations[currentLang].instructions;
+        document.getElementById('submitBtn').innerText = uiTranslations[currentLang].submitBtn;
+        document.getElementById('resultTitle').innerText = uiTranslations[currentLang].resultTitle;
+        document.getElementById('labelAnxious').innerText = uiTranslations[currentLang].anxious;
+        document.getElementById('labelSecure').innerText = uiTranslations[currentLang].secure;
+        document.getElementById('labelAvoidant').innerText = uiTranslations[currentLang].avoidant;
+
+        // Re-render strings dynamically while preserving chosen button indexes
+        renderQuestions();
+
+        // Clear dynamic results box for a clean experience
+        document.getElementById('resultsCard').style.display = 'none';
+        document.getElementById('verdictText').innerHTML = '';
+    }
+
+    function calculateScore() {
+        let anxious = 0;
+        let secure = 0;
+        let avoidant = 0;
+        let unansweredCount = 0;
+
+        questionsData.forEach((q, index) => {
+            const choice = userChoices[index];
+            if (!choice) {
+                unansweredCount++;
+            } else if (choice === 'true') {
+                if (q.type === 'A') anxious++;
+                if (q.type === 'B') secure++;
+                if (q.type === 'C') avoidant++;
+            }
+        });
+
+        // Set live calculated numbers
+        document.getElementById('anxiousScore').innerText = anxious;
+        document.getElementById('secureScore').innerText = secure;
+        document.getElementById('avoidantScore').innerText = avoidant;
+
+        let verdict = currentLang === 'en' ? "Your dominant attachment style is: " : "உங்கள் முக்கிய பற்றுதல் குணம் (Attachment Style): ";
+        
+        // Prompt validation if any statement was entirely overlooked
+        if (unansweredCount > 0) {
+            verdict = currentLang === 'en' 
+                ? `Please make a selection for all questions! (You missed ${unansweredCount})`
+                : `தயவுசெய்து அனைத்து கேள்விகளுக்கும் பதிலளிக்கவும்! (நீங்கள் இன்னும் ${unansweredCount} கேள்விகளை விட்டுள்ளீர்கள்)`;
+        } else {
+            let max = Math.max(anxious, secure, avoidant);
+            if (max === 0) {
+                verdict = currentLang === 'en' 
+                    ? "You evaluated everything as False! Select True on properties that match you to view an evaluation." 
+                    : "அனைத்து கேள்விகளுக்கும் 'தவறு' என்று குறிப்பிட்டுள்ளீர்கள்! உங்களோடு ஒத்துப்போகும் குணங்களுக்கு 'உண்மை' என்பதைத் தேர்ந்தெடுக்கவும்.";
+            } else {
+                let styles = [];
+                if (currentLang === 'en') {
+                    if (anxious === max) styles.push("Anxious 🌸");
+                    if (secure === max) styles.push("Secure ✨");
+                    if (avoidant === max) styles.push("Avoidant 🌊");
+                } else {
+                    if (anxious === max) styles.push("பதற்றமான நிலை (Anxious) 🌸");
+                    if (secure === max) styles.push("பாதுகாப்பான நிலை (Secure) ✨");
+                    if (avoidant === max) styles.push("விலகியிருக்கும் நிலை (Avoidant) 🌊");
+                }
+                verdict += styles.join(" & ");
+            }
+        }
+
+        document.getElementById('verdictText').innerHTML = verdict;
+        
+        const resultsCard = document.getElementById('resultsCard');
+        resultsCard.style.display = 'block';
+        resultsCard.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Initial build layout trigger
+    renderQuestions();
+</script>
+
+</body>
+</html>
